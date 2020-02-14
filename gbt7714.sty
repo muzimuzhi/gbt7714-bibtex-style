@@ -10,7 +10,7 @@
 %% https://github.com/CTeX-org/gbt7714-bibtex-style
 %% Version: 2019/11/20 v1.1.2
 %% -------------------------------------------------------------------
-%% Copyright (C) 2016-2019 by Zeping Lee <zepinglee AT gmail.com>
+%% Copyright (C) 2016-2020 by Zeping Lee <zepinglee AT gmail.com>
 %% -------------------------------------------------------------------
 %% This file may be distributed and/or modified under the
 %% conditions of the LaTeX Project Public License, either version 1.3c
@@ -37,6 +37,7 @@
 \if@gbt@numerical
   \PassOptionsToPackage{sort&compress}{natbib}
 \fi
+\RequirePackage{etoolbox}
 \RequirePackage{natbib}
 \RequirePackage{url}
 \newcommand\bibstyle@super{\bibpunct{[}{]}{,}{s}{,}{\textsuperscript{,}}}
@@ -51,17 +52,27 @@
 }
 \newcommand\gbt@bib@numerical{%
   \if@gbt@mmxv
-    \bibliographystyle{gbt7714-unsrt}%
+    \gbt@bib@loadstyle{gbt7714-unsrt}%
   \else
-    \bibliographystyle{gbt7714-2005-unsrt}%
+    \gbt@bib@loadstyle{gbt7714-2005-unsrt}%
   \fi
 }
 \newcommand\gbt@bib@authoryear{%
   \if@gbt@mmxv
-    \bibliographystyle{gbt7714-plain}%
+    \gbt@bib@loadstyle{gbt7714-plain}%
   \else
-    \bibliographystyle{gbt7714-2005-plain}%
+    \gbt@bib@loadstyle{gbt7714-2005-plain}%
   \fi
+}
+\newcommand\gbt@bib@loadstyle[1]{%
+  \def\gbt@bib@stylename{#1}%
+}
+\AtBeginDocument{%
+  \patchcmd\bibliography
+    {\immediate\write\@auxout}
+    {\immediate\write\@auxout{\string\bibstyle{\gbt@bib@stylename}}%
+     \immediate\write\@auxout}
+    {}{\fail}%
 }
 \if@gbt@numerical
   \if@gbt@super

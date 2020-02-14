@@ -467,6 +467,7 @@ version 2005/12/01 or later.
 \if@gbt@numerical
   \PassOptionsToPackage{sort&compress}{natbib}
 \fi
+\RequirePackage{etoolbox}
 \RequirePackage{natbib}
 \RequirePackage{url}
 %    \end{macrocode}
@@ -494,17 +495,27 @@ version 2005/12/01 or later.
 }
 \newcommand\gbt@bib@numerical{%
   \if@gbt@mmxv
-    \bibliographystyle{gbt7714-unsrt}%
+    \gbt@bib@loadstyle{gbt7714-unsrt}%
   \else
-    \bibliographystyle{gbt7714-2005-unsrt}%
+    \gbt@bib@loadstyle{gbt7714-2005-unsrt}%
   \fi
 }
 \newcommand\gbt@bib@authoryear{%
   \if@gbt@mmxv
-    \bibliographystyle{gbt7714-plain}%
+    \gbt@bib@loadstyle{gbt7714-plain}%
   \else
-    \bibliographystyle{gbt7714-2005-plain}%
+    \gbt@bib@loadstyle{gbt7714-2005-plain}%
   \fi
+}
+\newcommand\gbt@bib@loadstyle[1]{%
+  \def\gbt@bib@stylename{#1}%
+}
+\AtBeginDocument{%
+  \patchcmd\bibliography
+    {\immediate\write\@auxout}
+    {\immediate\write\@auxout{\string\bibstyle{\gbt@bib@stylename}}%
+     \immediate\write\@auxout}
+    {}{\fail}%
 }
 %    \end{macrocode}
 % \end{macro}
